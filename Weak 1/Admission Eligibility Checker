@@ -1,0 +1,25 @@
+#include <stdio.h>
+int main()
+{
+    int m,p,c,t1,t2;
+    printf("Enter the totel obtained in Physics : ");
+    scanf("%d",&p);
+    printf("Enter the totel obtained in chemistry : ");
+    scanf("%d",&c);
+    printf("Enter the totel obtained in mathematics : ");
+    scanf("%d",&m);
+    t1=m+p+c;
+    t2=m+p;
+    printf("Totel marks of Maths,Physics and Chemistry : %d",t1);
+    printf("\nTotel marks of Maths and Physics : %d",t2);
+    if(m>=65 && p>=55 && c>=50 && t1>=190 || t2 >=140)
+    {
+        printf("\nThe candidate is eligible");
+    
+    }
+    else
+    {
+        printf("\nThe candidate is not eligible");
+    }
+    return 0;
+}
