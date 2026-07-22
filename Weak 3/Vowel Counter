@@ -1,0 +1,24 @@
+/*To count the no.of vowels in given string*/
+
+#include<stdio.h>
+#include<string.h>
+int main()
+{
+	char s[10],x;
+	char vowels[]= "AEIOUaeiou";
+	int count=0,i,j;
+	printf("Enter the string  ");
+	scanf("%s",s);
+	for(i=0;i<strlen(s);i++)
+	{
+		for(j=0;j<10;j++)
+		{   
+			if(vowels[j]==s[i])
+			{
+				count++;
+			}
+		}
+	}
+	printf("%d",count);
+	return 0;
+}
