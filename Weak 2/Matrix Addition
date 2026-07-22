@@ -1,0 +1,39 @@
+#include<stdio.h>
+int main()
+{
+	int a[3][3],b[3][3],i,j,r[3][3];
+	printf("Enter the A matrix elements ");
+	for(i=0;i<3;i++)
+	{
+		for(j=0;j<3;j++)
+		{
+			scanf("%d ",&a[i][i]);
+		}
+	}
+	printf("Enter the B matrix elements ");
+	for(i=0;i<3;i++)
+	{
+		for(j=0;j<3;j++)
+		{
+			scanf("%d ",&b[i][i]);
+		}
+	}
+	printf("The resultant matrix is ");
+	printf("Enter the matrix elements ");
+	for(i=0;i<3;i++)
+	{
+		for(j=0;j<3;j++)
+		{
+			r[i][j]=a[i][j]+b[i][j];
+		}
+	}
+	printf("Enter the matrix elements ");
+	for(i=0;i<3;i++)
+	{
+		for(j=0;j<3;j++)
+		{
+			printf("%d \n",r[i][i]);
+		}
+	}
+	return 0;
+}
