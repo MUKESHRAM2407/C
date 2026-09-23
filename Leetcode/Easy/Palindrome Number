@@ -1,0 +1,22 @@
+bool isPalindrome(int x) {
+    if(x<0){
+        return false;
+    }
+    else{
+        int copy=x;
+        long long sum=0;
+        int r;
+        while(x>0)
+        {
+            r=x%10;
+            sum=(sum*10)+r;
+            x=x/10;
+        }
+        if(sum==copy){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+}
