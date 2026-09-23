@@ -1,0 +1,91 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for a Hash Table node
+struct Node {
+    int key;
+    int value;
+    struct Node* next;
+};
+
+// Hash function to map values to table indices
+int hash(int key, int size) {
+    int h = key % size;
+    return h < 0 ? h + size : h; // Handle negative numbers
+}
+
+// Function to insert a key-value pair into the hash table
+void insert(struct Node** table, int size, int key, int value) {
+    int idx = hash(key, size);
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->key = key;
+    newNode->value = value;
+    newNode->next = table[idx];
+    table[idx] = newNode;
+}
+
+// Function to search for a key in the hash table
+struct Node* search(struct Node** table, int size, int key) {
+    int idx = hash(key, size);
+    struct Node* curr = table[idx];
+    while (curr != NULL) {
+        if (curr->key == key) {
+            return curr;
+        }
+        curr = curr->next;
+    }
+    return NULL;
+}
+
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+int* twoSum(int* nums, int numsSize, int target, int* returnSize) {
+    // Dynamically allocate memory for the result array
+    int* result = (int*)malloc(2 * sizeof(int));
+    *returnSize = 2;
+
+    // Use the array size as the hash table size (can be adjusted for load factor)
+    int hashSize = numsSize * 2; 
+    struct Node** table = (struct Node**)calloc(hashSize, sizeof(struct Node*));
+
+    for (int i = 0; i < numsSize; i++) {
+        int complement = target - nums[i];
+        
+        // Check if the complement already exists in the hash table
+        struct Node* found = search(table, hashSize, complement);
+        if (found != NULL) {
+            result[0] = found->value;
+            result[1] = i;
+            
+            // Free allocated hash table memory before returning
+            for (int j = 0; j < hashSize; j++) {
+                struct Node* curr = table[j];
+                while (curr != NULL) {
+                    struct Node* temp = curr;
+                    curr = curr->next;
+                    free(temp);
+                }
+            }
+            free(table);
+            return result;
+        }
+        
+        // If not found, insert the current number and its index into the hash table
+        insert(table, hashSize, nums[i], i);
+    }
+
+    // Clean up memory if no solution is found (though the problem guarantees one)
+    for (int j = 0; j < hashSize; j++) {
+        struct Node* curr = table[j];
+        while (curr != NULL) {
+            struct Node* temp = curr;
+            curr = curr->next;
+            free(temp);
+        }
+    }
+    free(table);
+
+    *returnSize = 0;
+    return NULL;
+}
