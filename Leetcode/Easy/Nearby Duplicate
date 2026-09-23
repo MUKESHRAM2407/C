@@ -1,0 +1,49 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool containsNearbyDuplicate(int* nums, int numsSize, int k)
+{
+    int size = numsSize * 2 + 1;
+
+    int* keys = (int*)malloc(size * sizeof(int));
+    int* indices = (int*)malloc(size * sizeof(int));
+    bool* used = (bool*)calloc(size, sizeof(bool));
+
+    for (int i = 0; i < numsSize; i++)
+    {
+        long long key = nums[i];
+        int index = (key % size + size) % size;
+
+        while (used[index])
+        {
+            if (keys[index] == nums[i])
+            {
+                if (i - indices[index] <= k)
+                {
+                    free(keys);
+                    free(indices);
+                    free(used);
+                    return true;
+                }
+
+                indices[index] = i;
+                break;
+            }
+
+            index = (index + 1) % size;
+        }
+
+        if (!used[index])
+        {
+            keys[index] = nums[i];
+            indices[index] = i;
+            used[index] = true;
+        }
+    }
+
+    free(keys);
+    free(indices);
+    free(used);
+
+    return false;
+}
