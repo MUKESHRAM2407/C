@@ -1,0 +1,37 @@
+#include <stdbool.h>
+#include <stdlib.h>
+
+bool containsDuplicate(int* nums, int numsSize)
+{
+    int size = numsSize * 2 + 1;
+
+    int* table = (int*)malloc(size * sizeof(int));
+    bool* used = (bool*)calloc(size, sizeof(bool));
+
+    for (int i = 0; i < numsSize; i++)
+    {
+        long long key = nums[i];
+
+        int index = (key % size + size) % size;
+
+        while (used[index])
+        {
+            if (table[index] == nums[i])
+            {
+                free(table);
+                free(used);
+                return true;
+            }
+
+            index = (index + 1) % size;
+        }
+
+        table[index] = nums[i];
+        used[index] = true;
+    }
+
+    free(table);
+    free(used);
+
+    return false;
+}
