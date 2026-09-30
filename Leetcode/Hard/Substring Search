@@ -1,0 +1,135 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define HASH_SIZE 10007
+
+typedef struct HashNode {
+    char* word;
+    int count;
+    struct HashNode* next;
+} HashNode;
+
+unsigned int get_hash(const char* str) {
+    unsigned int hash = 0;
+    while (*str) {
+        hash = hash * 31 + *str++;
+    }
+    return hash % HASH_SIZE;
+}
+
+void hash_insert(HashNode** table, const char* word, int val) {
+    unsigned int idx = get_hash(word);
+    HashNode* curr = table[idx];
+
+    while (curr != NULL) {
+        if (strcmp(curr->word, word) == 0) {
+            curr->count += val;
+            return;
+        }
+        curr = curr->next;
+    }
+
+    HashNode* node = (HashNode*)malloc(sizeof(HashNode));
+    node->word = strdup(word);
+    node->count = val;
+    node->next = table[idx];
+    table[idx] = node;
+}
+
+int hash_search(HashNode** table, const char* word) {
+    unsigned int idx = get_hash(word);
+    HashNode* curr = table[idx];
+
+    while (curr != NULL) {
+        if (strcmp(curr->word, word) == 0) {
+            return curr->count;
+        }
+        curr = curr->next;
+    }
+
+    return 0;
+}
+
+void free_hash_table(HashNode** table) {
+    for (int i = 0; i < HASH_SIZE; i++) {
+        HashNode* curr = table[i];
+
+        while (curr != NULL) {
+            HashNode* temp = curr;
+            curr = curr->next;
+            free(temp->word);
+            free(temp);
+        }
+
+        table[i] = NULL;
+    }
+}
+
+int* findSubstring(char* s, char** words, int wordsSize, int* returnSize) {
+    *returnSize = 0;
+
+    if (!s || wordsSize == 0)
+        return NULL;
+
+    int s_len = strlen(s);
+    int word_len = strlen(words[0]);
+    int total_words_len = wordsSize * word_len;
+
+    if (s_len < total_words_len)
+        return NULL;
+
+    int* result = (int*)malloc(s_len * sizeof(int));
+
+    HashNode* target_map[HASH_SIZE] = {NULL};
+
+    for (int i = 0; i < wordsSize; i++) {
+        hash_insert(target_map, words[i], 1);
+    }
+
+    char* token = (char*)malloc((word_len + 1) * sizeof(char));
+
+    for (int i = 0; i < word_len; i++) {
+        int left = i;
+        int count = 0;
+        HashNode* curr_map[HASH_SIZE] = {NULL};
+
+        for (int right = i; right + word_len <= s_len; right += word_len) {
+            strncpy(token, s + right, word_len);
+            token[word_len] = '\0';
+
+            int target_count = hash_search(target_map, token);
+
+            if (target_count > 0) {
+                hash_insert(curr_map, token, 1);
+                count++;
+
+                while (hash_search(curr_map, token) > target_count) {
+                    char* left_token = (char*)malloc((word_len + 1) * sizeof(char));
+                    strncpy(left_token, s + left, word_len);
+                    left_token[word_len] = '\0';
+
+                    hash_insert(curr_map, left_token, -1);
+                    count--;
+                    left += word_len;
+                    free(left_token);
+                }
+
+                if (count == wordsSize) {
+                    result[(*returnSize)++] = left;
+                }
+            } else {
+                free_hash_table(curr_map);
+                count = 0;
+                left = right + word_len;
+            }
+        }
+
+        free_hash_table(curr_map);
+    }
+
+    free(token);
+    free_hash_table(target_map);
+
+    return result;
+}
